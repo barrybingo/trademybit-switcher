@@ -18,7 +18,7 @@ from pycgminer import CgminerAPI
 
 class Algo:
     def __init__(self, name):
-        self.command    = '' # the command that is run when we want to mine this coin.
+        self.pool       = 0 # the pool for this algo
         self.name       = name
         self.cnt        = 0
 
@@ -26,8 +26,8 @@ class TradeMyBitSwitcher(object):
     def __init__(self):
         # Define supported algo
         self.algos = {}
-        self.algos['scrypt']  =  Algo('Scrypt')
-        self.algos['nscrypt'] =  Algo('N-Scrypt')
+        self.algos['x11']  =  Algo('x11')
+        self.algos['x13'] =  Algo('x13')
 
         self.profitability_log = None
         self.__load_config()
@@ -85,23 +85,24 @@ class TradeMyBitSwitcher(object):
         try:
             data = self.api.bestalgo()
             # parse json data into variables
-            algo1 = data[0]["algo"]
-            score1 = float(data[0]["score"])
-            algo2 = data[1]["algo"]
-            score2 = float(data[1]["score"])
+            for a in data:
+                if a['algo'] == 'x11':
+                    score_x11 = float(a['score'])
+                if a['algo'] == 'x13':
+                    score_x13 = float(a['score'])
 
-            self.logger.debug("%s : %f | %s: %f" % (algo1, score1, algo2, score2))
+            self.logger.debug("x11 : %f | x13: %f" % (score_x11, score_x13))
 
             # return result
-            if (score2 - score1) / score1 > self.profitability_threshold:
-                best = algo2
-            elif (score1 - score2) / score2 > self.profitability_threshold:
-                best = algo1
+            if (score_x13 - score_x11) / score_x11 > self.profitability_threshold:
+                best = 'x13'
+            elif (score_x11 - score_x13) / score_x13 > self.profitability_threshold:
+                best = 'x11'
             else:
                 best = None
 
             if self.profitability_log:
-                self.profitability_log.writerow({'date': datetime.datetime.now(), algo1: score1, algo2: score2})
+                self.profitability_log.writerow({'date': datetime.datetime.now(), 'x11': score_x11, 'x13': score_x13})
                 self.profitability_file.flush()
 
             return best
@@ -128,20 +129,14 @@ class TradeMyBitSwitcher(object):
 
     def switch_algo(self, algo):
         """Tells the current miner to exit and start the other one"""
-        self.logger.info('=> Switching to %s (running %s)' % (algo, self.algos[algo].command))
+        self.logger.info('=> Switching to %s (pool %s)' % (algo, self.algos[algo].pool))
         self.current_algo = algo
+
         try:
-            self.cgminer.quit()
-            time.sleep(self.switchtime) # Wait for it to quit / Or check the process id?
+            self.cgminer.switchpool(self.algos[algo].pool)
         except socket.error:
             pass # Cgminer not running
 
-        try:
-            subprocess.Popen(self.algos[algo].command)
-        except OSError:
-            self.logger.critical('Cannot execute [%s]!' % self.algos[algo].command)
-            self.logger.critical('Make sure your miner startup scripts are executable before continuing.')
-            sys.exit()
 
     def __prepare_logger(self, logging_config={}):
         """Configure the logger"""
@@ -247,17 +242,15 @@ class TradeMyBitSwitcher(object):
             self.logger.warning("Could not read cgminer port from config file. Defaulting to 4028")
             self.cgminer_host = 4028
 
-        for key in self.algos:
+        for key in dict(config.items('Pools')):
             try:
-                script = config.get('Scripts', key)
-                if os.path.isfile(script):
-                    self.algos[key].command = script
-                else:
-                    self.logger.critical('Script for %s not found!' % key)
-                    self.cleanup()
+                self.algos[key] = Algo(key)
+                self.algos[key].command = config.get('Pools', key)
             except ConfigParser.NoOptionError :
-                self.logger.warning('Script for %s not configured!' % key)
+                self.logger.warning('Pool for %s not configured!' % key)
                 continue
+
+
 
 def main():
     switcher = TradeMyBitSwitcher()

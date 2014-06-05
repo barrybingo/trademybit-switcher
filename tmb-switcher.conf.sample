@@ -20,7 +20,7 @@ idletime = 5
 # Profitability threshold to determine one algo as more profitable
 # With the default of 0.1, an algo needs to be 10% more profitable than
 # the other to be deemed more profitable.
-# This is used to not flap betwen algos once the profitability is similar.
+# This is used to not flap between algos once the profitability is similar.
 profitability_threshold = 0.1
 
 # Time (in seconds) to wait for one miner to exit before starting the other one
@@ -30,17 +30,8 @@ switchtime = 1
 host=127.0.0.1
 port=4028
 
-[Scripts]
-# Script that start mining the appropriate algo
-# Examples are included
+[Pools]
+# The sgminer pool associated with the algorithm
 
-# You should have scripts that set your clocks and environment 
-# variables appropriately, and start the appropriate miner. 
-
-# For Linux, uncomment below
-#nscrypt = ./scripts/nscrypt.sh
-#scrypt  = ./scripts/scrypt.sh
-
-# For Windows, uncomment below
-#nscrypt = scripts\nscrypt.bat
-#scrypt  = scripts\scrypt.bat
+x11 = 0
+x13 = 1

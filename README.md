@@ -1,15 +1,17 @@
-# TradeMyBit Switcher
+# TradeMyBit Switcher (x11/x13 pool switch via API)
 
 A script to switch between the scrypt and n-scrypt multipool as profitability dictates.
 
-Currently tested on:
-* xubuntu 13.10 with cgminer-kalroth and vertminer
-* xubuntu 13.10 with sgminer (nfactor branch)
-* SMOS Linux (Strider3000)
+## Fork Info
+
+This is a special fork to work with sgminer Dev Branch v5_0 which allows for each sgminer pool to use a different algo
+
+See https://bitcointa.lk/threads/ann-sgminer-new-unified-multi-algorithm-on-the-fly-kernel-switching-miner.321824/
 
 ## Dependencies
 
 * Python
+* SGMiner Dev Branch v5_0 from https://github.com/sgminer-dev/sgminer
 
 ## Usage
 
@@ -26,14 +28,14 @@ Currently tested on:
 $ python trademybit-switcher.py 
 ------------------------------------------------------------------------
 2014-03-13 09:27:34 :: Fetching data...
-2014-03-13 09:27:35 :: scrypt : 128.310230 | nscrypt: 120.328550
+2014-03-13 09:27:35 :: x11 : 128.310230 | x13: 120.328550
 2014-03-13 09:27:35 :: => Best: None | Currently mining: None
 2014-03-13 09:27:35 :: No miner running
-2014-03-13 09:27:35 :: => Switching to nscrypt (running ./scripts/nscrypt.sgminer.sh)
+2014-03-13 09:27:35 :: => Switching to x11 (pool 0)
 ...
-2014-03-13 18:35:56 :: nscrypt : 122.925360 | scrypt: 77.183520
-2014-03-13 18:35:56 :: => Best: nscrypt | Currently mining: scrypt
-2014-03-13 18:35:56 :: => Switching to nscrypt (running ./scripts/nscrypt.sgminer.sh)
+2014-03-13 18:35:56 :: x11 : 122.925360 | x13: 77.183520
+2014-03-13 18:35:56 :: => Best: x13 | Currently mining: x11
+2014-03-13 18:35:56 :: => Switching to x13 (pool 1)
 2014-03-13 18:35:57 :: Going to sleep for 5min...
 ...
 ```
@@ -59,7 +61,7 @@ Join `#switcher` on `irc.framper.com`
   * Gpu status => auto restart
   * Gpu hash speed / temperature => log or email?
 
-## Credits & Tips
+## Credits & Tips for user 0uranos
 In hope, not expectation:
 
 * BTC: `1JTGQbeh74jVFHhGAddYKe3S6oA8azmArk`
