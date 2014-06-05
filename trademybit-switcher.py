@@ -245,7 +245,7 @@ class TradeMyBitSwitcher(object):
         for key in dict(config.items('Pools')):
             try:
                 self.algos[key] = Algo(key)
-                self.algos[key].command = config.get('Pools', key)
+                self.algos[key].pool = config.get('Pools', key)
             except ConfigParser.NoOptionError :
                 self.logger.warning('Pool for %s not configured!' % key)
                 continue
