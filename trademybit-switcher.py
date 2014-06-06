@@ -85,6 +85,8 @@ class TradeMyBitSwitcher(object):
         try:
             data = self.api.bestalgo()
             # parse json data into variables
+
+            score_x11 = score_x13 = 0.0
             for a in data:
                 if a['algo'] == 'x11':
                     score_x11 = float(a['score'])
