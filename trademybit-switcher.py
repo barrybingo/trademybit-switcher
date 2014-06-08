@@ -199,7 +199,8 @@ class TradeMyBitSwitcher(object):
             self.profitability_log.writeheader()
 
     def __load_config(self):
-        config_file =  'tmb-switcher.conf'
+        config_file = os.path.join(os.path.dirname(__file__), 'tmb-switcher.conf')
+
         #  Check if the config file is present
         if not(os.path.isfile(config_file)):
             print "ERROR: Configuration file not found!"
