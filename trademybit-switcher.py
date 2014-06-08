@@ -111,6 +111,8 @@ class TradeMyBitSwitcher(object):
         except (socket.error, KeyError):
             self.logger.warning('Cannot connect to TMB API...')
             return None
+        except ZeroDivisionError:
+            return None
 
     # # Return scrypt/nscrypt based on the version of the miner running
     # # Temporarly disabled to support sgminer since we can't reliably determine
